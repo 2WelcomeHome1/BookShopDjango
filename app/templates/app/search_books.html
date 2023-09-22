@@ -1,0 +1,20 @@
+<li><a href="/">Главная страница</a></li> 
+
+<h1>Результаты поиска</h1>
+
+{% if query %}
+    <p>Search query: {{ query }}</p>
+{% endif %}
+
+{% for book in books %}
+    <li><a href="/book/{{ book.isbn }}/">{{ book.title }} - {{ book.authors }}</a></li> 
+    {% if book.thumbnailUrl %}
+        <img src="{{ book.thumbnailUrl.url }}" alt="Загруженное изображение">
+    {% else %}
+        <img src="https://media.istockphoto.com/id/1452662817/vector/no-picture-available-placeholder-thumbnail-icon-illustration-design.jpg?s=612x612&w=0&k=20&c=bGI_FngX0iexE3EBANPw9nbXkrJJA4-dcEJhCrP8qMw=" alt="" width="300" height="300"/>
+    {% endif %} 
+{% empty %}
+    <li><p>No books found.</p></li>
+{% endfor %}
+
+<li><a href="/">Назад</a></li> 

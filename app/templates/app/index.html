@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Магазин книг</title>
+</head>
+    <body>
+        <table style="width:1200px">
+            <tr  align = 'left'>
+                <th><h1>Добро пожаловать в магазин книг!</h1></th>
+            <!-- </tr>
+            
+            <tr> -->
+                <th align = 'right'>
+                {% if user.is_authenticated %}
+                <p >Желаете <a href="logout/">Выйти</a>, {{request.user.username}}</p>
+                {% else %}
+                <p><a href="login/">Авторизация</a><a href="register/">   Регистрация</a></p>
+                {% endif %}
+                </th>
+            </tr>
+            
+        </table>
+
+
+        <form action="{% url 'search_books' %}" method="GET">
+            <input type="text" name="query" placeholder="Search by author or title">
+            <button type="submit">Search</button>
+        </form>
+
+        <form method="get">
+            <label for="per_page">Количество элементов на странице:</label>
+            <select name="per_page" id="per_page">
+            <option value="10" {% if per_page == 10 %}selected{% endif %}>10</option>
+            <option value="20" {% if per_page == 20 %}selected{% endif %}>20</option>
+            <option value="50" {% if per_page == 50 %}selected{% endif %}>50</option>
+            <option value="100" {% if per_page == 100 %}selected{% endif %}>100</option>
+
+            <!-- Добавьте другие варианты, если необходимо -->
+            </select>
+            <input type="submit" value="Применить">
+        </form>
+    
+        <table>
+            <tr>
+                <th><h2>Категории книг:</h2></th>
+            </tr>
+
+            <tr>
+                {% for category in categories %}
+                {% if forloop.counter|divisibleby:5 %}<tr>{% endif %}
+                <td><li><a href="category/{{ category.name }}/">{{ category.name }}</a></li> </td>
+                {% empty %}
+                <td><li><p>No categories found.</p></li></td>
+                {% endfor %}
+            </tr>
+            
+            <tr>
+                <th><h2>Последние поступления:</h2></th>
+            </tr>
+            
+            <tr>
+
+                    {% for book in page %}
+                        {% if forloop.counter|divisibleby:3 %}<tr>{% endif %}
+                        <td><a href="/book/{{ book.isbn }}/">{{ book.title }} - {{ book.authors }}</a></td>
+                        {% if book.thumbnailUrl %}
+                        <td><img src="{{ book.thumbnailUrl.url }}" alt="Загруженное изображение"></td>
+                        {% else %}
+                        <td><img src="https://media.istockphoto.com/id/1452662817/vector/no-picture-available-placeholder-thumbnail-icon-illustration-design.jpg?s=612x612&w=0&k=20&c=bGI_FngX0iexE3EBANPw9nbXkrJJA4-dcEJhCrP8qMw=" alt="" width="300" height="300"/></td>
+                        {% endif %} 
+                        {% empty %}
+                        <li><p>No books found.</p></li>
+                    {% endfor %}
+
+            </tr>
+        </table>
+
+
+
+        <div class="pagination">
+            {% if page.has_previous %}
+                <a href="?page={{ page.previous_page_number }}">previous</a>
+            {% endif %}
+        
+            <span class="current-page">{{ page.number }}</span>
+        
+            {% if page.has_next %}
+                <a href="?page={{ page.next_page_number }}">next</a>
+            {% endif %}
+        </div>
+    </body>
+</html>
